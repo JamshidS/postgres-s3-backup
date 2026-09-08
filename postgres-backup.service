@@ -1,0 +1,14 @@
+[Unit]
+Description=PostgreSQL S3 Backup
+Requires=docker.service
+After=docker.service
+
+[Service]
+Type=oneshot
+WorkingDirectory=/path/to/docker-compose-directory
+
+ExecStart=/usr/bin/docker compose run --rm postgres-backup
+
+Nice=10
+IOSchedulingClass=best-effort
+IOSchedulingPriority=7

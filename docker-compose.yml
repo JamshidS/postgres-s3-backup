@@ -1,0 +1,49 @@
+services:
+  postgres:
+    image: postgres:17.9
+    restart: unless-stopped
+
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_DB: ${POSTGRES_DB:-app}
+
+    healthcheck:
+      test: ["CMD", "pg_isready", "-U", "postgres"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+    # Remove this if PostgreSQL does not need to be reachable
+    # directly from outside Docker.
+    ports:
+      - "5432:5432"
+
+  postgres-backup:
+    build:
+      context: ./postgres-backup
+
+    profiles:
+      - backup
+
+    environment:
+      PGHOST: postgres
+      PGPORT: 5432
+      PGUSER: postgres
+      PGPASSWORD: ${POSTGRES_PASSWORD}
+
+      S3_BUCKET: ${POSTGRES_BACKUP_BUCKET}
+      S3_PREFIX: production
+
+    depends_on:
+      postgres:
+        condition: service_healthy
+
+    cpus: "0.25"
+    mem_limit: 256m
+
+volumes:
+  postgres_data:
