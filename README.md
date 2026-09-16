@@ -99,3 +99,5 @@ Check backup logs:
 A backup is only useful if it can be restored.
 
 Always perform a restore test against a temporary PostgreSQL instance before relying on this setup for production.
+
+Detailed documentation: https://medium.com/@jamshidsadiqi25/backing-up-a-dockerized-postgresql-database-on-aws-ec2-to-s3-d982c0e13ad6
